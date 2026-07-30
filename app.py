@@ -5,6 +5,20 @@ from datetime import datetime
 
 st.set_page_config(page_title="DoneForYou", page_icon="🎙️", layout="wide")
 
+st.markdown("""
+<style>
+    /* HIDE ALL STREAMLIT BRANDING */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    [data-testid="stDecoration"] {visibility: hidden !important;}
+    [data-testid="stStatusWidget"] {visibility: hidden !important;}
+    a[href*="github"] {display: none !important;}
+    .stDeployButton {display: none !important;}
+</style>
+""", unsafe_allow_html=True)
+
 if "notes" not in st.session_state:
     st.session_state.notes = []
 if "current_note" not in st.session_state:
