@@ -6,48 +6,62 @@ from datetime import datetime
 st.set_page_config(page_title="DoneForYou", page_icon="🎙️", layout="wide")
 
 if "dark_mode" not in st.session_state:
-    st.session_state.dark_mode = True
+    st.session_state.dark_mode = False # Start LIGHT now like your screenshot
 
 def toggle_theme():
     st.session_state.dark_mode = not st.session_state.dark_mode
 
-# THEME COLORS
+# --- PERFECT THEME CSS ---
 if st.session_state.dark_mode:
-    bg, card_bg, text, subtext, border, btn_bg, btn_text = "#0e1117", "#1e222b", "#ffffff", "#9ca3af", "#2a2e39", "#262b36", "#ffffff"
+    # DARK
+    st.markdown("""
+    <style>
+        #MainMenu, footer, header, [data-testid="stToolbar"],.stDeployButton {display: none!important;}
+      .stApp { background: #0e1117!important; }
+        [data-testid="stSidebar"] { background: #151821!important; }
+        h1, h2, h3, p, div, label, span { color: #ffffff!important; }
+        [data-testid="stCaptionContainer"] { color: #9ca3af!important; }
+        [data-testid="stFileUploader"] { background: #1e222b!important; border: 1px dashed #2a2e39!important; border-radius: 12px!important; }
+        [data-testid="stFileUploader"] button { background: #2a303c!important; color: white!important; border: 1px solid #3a404f!important; }
+        [data-testid="stFileUploader"] small { color: #9ca3af!important; }
+    </style>
+    """, unsafe_allow_html=True)
 else:
-    bg, card_bg, text, subtext, border, btn_bg, btn_text = "#fdfcfb", "#ffffff", "#111827", "#6b7280", "#e5e7eb", "#111827", "#ffffff"
+    # LIGHT - FIXED
+    st.markdown("""
+    <style>
+        #MainMenu, footer, header, [data-testid="stToolbar"],.stDeployButton {display: none!important;}
+      .stApp { background: #ffffff!important; }
+        [data-testid="stSidebar"] { background: #f9f8f6!important; border-right: 1px solid #eee; }
+        h1, h2, h3 { color: #111827!important; }
+        p, div, label, span { color: #111827!important; }
+        [data-testid="stCaptionContainer"] { color: #6b7280!important; }
 
-st.markdown(f"""
-<style>
-    #MainMenu {{visibility: hidden;}} footer {{visibility: hidden;}} header {{visibility: hidden;}}
-    [data-testid="stToolbar"] {{visibility: hidden!important;}}.stDeployButton {{display: none!important;}}
-
-  .stApp {{ background-color: {bg}!important; }}
-    [data-testid="stSidebar"] {{ background-color: {card_bg}!important; border-right: 1px solid {border}; }}
-
-    h1, h2, h3, p, div, span, label {{ color: {text}!important; }}
-
-    /* --- FIX FOR UPLOADER --- */
-    [data-testid="stFileUploader"] {{
-        background: {card_bg}!important;
-        border: 2px dashed {border}!important;
-        border-radius: 16px!important;
-    }}
-    /* The small dark upload button inside */
-    [data-testid="stFileUploader"] button {{
-        background-color: {btn_bg}!important;
-        color: {btn_text}!important;
-        border: 1px solid {border}!important;
-    }}
-    [data-testid="stFileUploader"] button * {{
-        color: {btn_text}!important;
-    }}
-    /* The "200MB per file" text */
-    [data-testid="stFileUploader"] small {{
-        color: {subtext}!important;
-    }}
-</style>
-""", unsafe_allow_html=True)
+        /* LIGHT MODE UPLOADER - WHITE BAR, DARK TEXT */
+        [data-testid="stFileUploader"] {
+            background: #ffffff!important;
+            border: 1px dashed #d1d5db!important;
+            border-radius: 12px!important;
+            padding: 10px!important;
+        }
+        [data-testid="stFileUploader"] div,
+        [data-testid="stFileUploader"] span,
+        [data-testid="stFileUploader"] p {
+            color: #111827!important;
+        }
+        [data-testid="stFileUploader"] button {
+            background: #ffffff!important;
+            color: #111827!important;
+            border: 1px solid #d1d5db!important;
+        }
+        [data-testid="stFileUploader"] button * {
+            color: #111827!important;
+        }
+        [data-testid="stFileUploader"] small {
+            color: #6b7280!important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
 if "notes" not in st.session_state:
     st.session_state.notes = []
@@ -58,7 +72,7 @@ groq_key = st.secrets.get("GROQ_API_KEY")
 client = Groq(api_key=groq_key) if groq_key else None
 
 with st.sidebar:
-    st.markdown(f"## 🎙️ DoneForYou")
+    st.markdown("## 🎙️ DoneForYou")
     if st.button("＋ New Meeting Note", use_container_width=True, type="primary"):
         st.session_state.current_note = None
         st.rerun()
@@ -93,7 +107,7 @@ uploaded = st.file_uploader("Drop your audio file here", type=["mp3","m4a","wav"
 st.caption("Click to upload or drag and drop • Supports MP3, WAV, M4A • 200MB max")
 
 if uploaded and client:
-    with st.spinner("✨ Working magic..."):
+    with st.spinner("Working..."):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
             tmp.write(uploaded.read())
             tmp_path = tmp.name
